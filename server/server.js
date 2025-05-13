@@ -15,10 +15,14 @@ app.use(cors());
 // MongoDB connection
 const connectDB = async () => {
   try {
-    // In a production app, you'd use an environment variable for the connection string
-    const mongoURI = process.env.MONGO_URI || 'mongodb://localhost:27017/bookblog';
+    const mongoURI = process.env.MONGO_URI;
+    
+    if (!mongoURI) {
+      throw new Error('MongoDB connection string is not defined in environment variables');
+    }
+    
     await mongoose.connect(mongoURI);
-    console.log('MongoDB connected');
+    console.log('MongoDB Atlas connected successfully');
   } catch (err) {
     console.error('MongoDB connection error:', err.message);
     process.exit(1);
