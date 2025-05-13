@@ -1,11 +1,16 @@
 
 // Book Blog API Server
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-require('dotenv').config();
+import express from 'express';
+import mongoose from 'mongoose';
+import cors from 'cors';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+// Initialize dotenv
+dotenv.config();
 
 // Initialize Express app
 const app = express();
