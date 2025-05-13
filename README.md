@@ -1,73 +1,105 @@
-# Welcome to your Lovable project
 
-## Project info
+# BookBlog - MERN Stack Blog Application
 
-**URL**: https://lovable.dev/projects/3b93eb96-d0b3-410a-afa9-8026839fe4d7
+A full-stack blog application about books built with the MERN (MongoDB, Express, React, Node.js) stack.
 
-## How can I edit this code?
+## Features
 
-There are several ways of editing your application.
+- User authentication (login/register) with JWT
+- Create, read, update, and delete blog posts
+- Protected routes for authenticated users
+- Responsive design with Tailwind CSS
 
-**Use Lovable**
+## Tech Stack
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/3b93eb96-d0b3-410a-afa9-8026839fe4d7) and start prompting.
+### Frontend
+- React
+- TypeScript
+- React Router for navigation
+- React Query for data fetching
+- React Hook Form + Zod for form validation
+- Tailwind CSS and shadcn/ui for styling
 
-Changes made via Lovable will be committed automatically to this repo.
+### Backend
+- Node.js with Express
+- MongoDB with Mongoose for database operations
+- JWT for authentication
+- bcrypt for password hashing
 
-**Use your preferred IDE**
+## Getting Started
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Prerequisites
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+- Node.js (v14+)
+- MongoDB (local or Atlas)
 
-Follow these steps:
+### Installation
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+1. Clone the repository:
+```
+git clone <repository-url>
+cd bookblog
+```
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+2. Install dependencies for both frontend and backend:
+```
+npm install
+```
 
-# Step 3: Install the necessary dependencies.
-npm i
+3. Set up environment variables:
+   - Copy `server/.env.example` to `server/.env`
+   - Update the MongoDB connection string and JWT secret
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+4. Start the development servers:
+
+For the frontend:
+```
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+For the backend:
+```
+cd server
+node server.js
+```
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+5. The frontend should now be running at http://localhost:8080 and the backend at http://localhost:5000
 
-**Use GitHub Codespaces**
+## API Endpoints
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### Authentication
+- `POST /api/auth/register` - Register a new user
+- `POST /api/auth/login` - Login a user
 
-## What technologies are used for this project?
+### Blog Posts
+- `GET /api/posts` - Get all posts
+- `GET /api/posts/:id` - Get a specific post
+- `POST /api/posts` - Create a new post (requires authentication)
+- `PUT /api/posts/:id` - Update a post (requires authentication)
+- `DELETE /api/posts/:id` - Delete a post (requires authentication)
 
-This project is built with:
+## Project Structure
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+```
+/
+├── src/                  # Frontend source files
+│   ├── components/       # React components
+│   ├── context/          # React context providers
+│   ├── pages/            # Page components
+│   ├── services/         # API service functions
+│   ├── types/            # TypeScript type definitions
+│   ├── App.tsx           # Main App component
+│   └── main.tsx          # Entry point
+├── server/               # Backend source files
+│   ├── server.js         # Express server setup
+│   └── .env.example      # Example environment variables
+└── README.md             # Project documentation
+```
 
-## How can I deploy this project?
+## Future Enhancements
 
-Simply open [Lovable](https://lovable.dev/projects/3b93eb96-d0b3-410a-afa9-8026839fe4d7) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+- Comment system for blog posts
+- User profiles
+- Image upload functionality
+- Search and filtering capabilities
+- Categories and tags for posts
