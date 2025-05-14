@@ -1,4 +1,3 @@
-
 // Book Blog API Server
 import express from 'express';
 import mongoose from 'mongoose';
@@ -35,6 +34,26 @@ const connectDB = async () => {
 };
 
 // Define schemas
+const commentSchema = new mongoose.Schema({
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  userName: {
+    type: String,
+    required: true
+  },
+  content: {
+    type: String,
+    required: true
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
+  }
+});
+
 const postSchema = new mongoose.Schema({
   title: {
     type: String,
@@ -52,6 +71,7 @@ const postSchema = new mongoose.Schema({
     type: String,
     default: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5'
   },
+  comments: [commentSchema],
   createdAt: {
     type: Date,
     default: Date.now
@@ -168,13 +188,13 @@ app.post('/api/auth/login', async (req, res) => {
     // Check if user exists
     let user = await User.findOne({ email });
     if (!user) {
-      return res.status(400).json({ message: 'Invalid credentials' });
+      return res.status(400).json({ message: 'Invalid email' });
     }
     
     // Check password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(400).json({ message: 'Invalid credentials' });
+      return res.status(400).json({ message: 'Invalid password' });
     }
     
     // Generate token
@@ -294,6 +314,80 @@ app.delete('/api/posts/:id', auth, async (req, res) => {
     console.error(err.message);
     if (err.kind === 'ObjectId') {
       return res.status(404).json({ message: 'Post not found' });
+    }
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Comment routes
+// Add a comment to a post
+app.post('/api/posts/:id/comments', auth, async (req, res) => {
+  try {
+    const { content } = req.body;
+    
+    if (!content) {
+      return res.status(400).json({ message: 'Comment content is required' });
+    }
+    
+    const post = await Post.findById(req.params.id);
+    if (!post) {
+      return res.status(404).json({ message: 'Post not found' });
+    }
+    
+    const newComment = {
+      userId: req.user.id,
+      userName: req.user.name,
+      content
+    };
+    
+    post.comments.unshift(newComment);
+    await post.save();
+    
+    res.json({ comments: post.comments });
+  } catch (err) {
+    console.error(err.message);
+    if (err.kind === 'ObjectId') {
+      return res.status(404).json({ message: 'Post not found' });
+    }
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Delete a comment
+app.delete('/api/posts/:postId/comments/:commentId', auth, async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.postId);
+    if (!post) {
+      return res.status(404).json({ message: 'Post not found' });
+    }
+    
+    // Find the comment
+    const comment = post.comments.find(
+      comment => comment._id.toString() === req.params.commentId
+    );
+    
+    if (!comment) {
+      return res.status(404).json({ message: 'Comment not found' });
+    }
+    
+    // Check if user is authorized to delete the comment
+    if (comment.userId.toString() !== req.user.id) {
+      return res.status(401).json({ message: 'User not authorized to delete this comment' });
+    }
+    
+    // Remove the comment
+    const removeIndex = post.comments
+      .map(comment => comment._id.toString())
+      .indexOf(req.params.commentId);
+    
+    post.comments.splice(removeIndex, 1);
+    await post.save();
+    
+    res.json({ comments: post.comments });
+  } catch (err) {
+    console.error(err.message);
+    if (err.kind === 'ObjectId') {
+      return res.status(404).json({ message: 'Resource not found' });
     }
     res.status(500).json({ message: 'Server error' });
   }

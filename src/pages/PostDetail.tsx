@@ -1,13 +1,13 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { postsAPI } from '../services/api';
-import { Post } from '../types';
+import { Post, Comment } from '../types';
 import { useAuth } from '../context/AuthContext';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { Edit, Trash2, ArrowLeft } from 'lucide-react';
+import Comments from '@/components/Comments';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -33,6 +33,12 @@ const PostDetail: React.FC = () => {
       try {
         if (!id) return;
         const data = await postsAPI.getPostById(id);
+        
+        // Ensure post has comments array
+        if (!data.post.comments) {
+          data.post.comments = [];
+        }
+        
         setPost(data.post);
       } catch (error) {
         console.error('Failed to fetch post:', error);
@@ -64,6 +70,15 @@ const PostDetail: React.FC = () => {
         title: 'Error',
         description: 'Failed to delete the post. Please try again.',
         variant: 'destructive',
+      });
+    }
+  };
+
+  const handleCommentsUpdate = (updatedComments: Comment[]) => {
+    if (post) {
+      setPost({
+        ...post,
+        comments: updatedComments
       });
     }
   };
@@ -174,6 +189,15 @@ const PostDetail: React.FC = () => {
         className="blog-content"
         dangerouslySetInnerHTML={{ __html: post.content.replace(/\n/g, '<br />') }}
       />
+      
+      {/* Comments Section */}
+      <div className="mt-12 border-t pt-8">
+        <Comments 
+          postId={post._id || ''} 
+          comments={post.comments || []} 
+          onCommentsUpdate={handleCommentsUpdate}
+        />
+      </div>
     </article>
   );
 };

@@ -1,3 +1,10 @@
+export interface Comment {
+  _id: string;
+  userId: string;
+  userName: string;
+  content: string;
+  createdAt: Date;
+}
 
 export interface Post {
   _id?: string;
@@ -5,6 +12,7 @@ export interface Post {
   author: string;
   content: string;
   coverImageURL: string;
+  comments: Comment[];
   createdAt: Date;
 }
 

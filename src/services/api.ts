@@ -1,4 +1,3 @@
-
 import { Post, User } from '../types';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
@@ -86,6 +85,31 @@ export const postsAPI = {
   
   deletePost: async (id: string, token: string) => {
     const response = await fetch(`${API_URL}/posts/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    
+    return handleResponse(response);
+  },
+  
+  // Comment methods
+  addComment: async (postId: string, content: string, token: string) => {
+    const response = await fetch(`${API_URL}/posts/${postId}/comments`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify({ content }),
+    });
+    
+    return handleResponse(response);
+  },
+  
+  deleteComment: async (postId: string, commentId: string, token: string) => {
+    const response = await fetch(`${API_URL}/posts/${postId}/comments/${commentId}`, {
       method: 'DELETE',
       headers: {
         'Authorization': `Bearer ${token}`,
